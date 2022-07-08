@@ -106,7 +106,6 @@ function nextTask(){
         currentTimeState.currentTime = 0
         currentTimeState.currentTask = "Nothing"
         setAnimation(currentTimeState.currentTaskType)
-        progressBarWidth(0)
     }
 
     setTimer();
@@ -160,6 +159,25 @@ function setTimer() {
     document.querySelector("#time").innerText = (min < 10 ? "0" + min : min) + ":" + (sec < 10 ? "0" + sec : sec)
     document.querySelector("#currentTask").innerText = currentTimeState.currentTask
 
+    updateTitle(min, sec, currentTimeState.currentTaskType === 1 ? "Focus!" : "Relax...")
+    document.querySelector('link[type="image/x-icon"]').setAttribute("href", currentTimeState.currentTaskType === 1 ? "work.svg" : "relax.svg")
+    switch (currentTimeState.currentTaskType){
+        case 0:
+            progressBarWidth(0)
+            updateTitle(min, sec, "Start Something")
+            document.querySelector('link[type="image/x-icon"]').setAttribute("href", "pomodoro.svg")
+            break
+        case 1:
+            progressBarWidth((pomodoroTime - (currentTimeState.currentTime)) * 100 / pomodoroTime)
+            updateTitle(min, sec, "Focus!")
+            document.querySelector('link[type="image/x-icon"]').setAttribute("href", "work.svg")
+            break
+        case 2:
+            progressBarWidth((shortBreakTime - (currentTimeState.currentTime)) * 100 / shortBreakTime)
+            updateTitle(min, sec, "Relax...")
+            document.querySelector('link[type="image/x-icon"]').setAttribute("href", "relax.svg")
+    }
+
     for(const className of ["card", "card-header", "card-footer"]){
         const cardComponent = document.querySelector(`.${className}`)
         cardComponent.classList.remove("border-white", "border-danger", "border-success")
@@ -178,17 +196,12 @@ function setTimer() {
 
 //Update countdown timer every second
 function updateTimeEverySecond() {
-    switch (currentTimeState.currentTaskType){
+    switch (currentTimeState.currentTime){
         case 0:
-            progressBarWidth(0)
             nextTask()
             break
-        case 1:
-            progressBarWidth((pomodoroTime - (--currentTimeState.currentTime)) * 100 / pomodoroTime)
-            setTimer();
-            break
-        case 2:
-            progressBarWidth((shortBreakTime - (--currentTimeState.currentTime)) * 100 / shortBreakTime)
+        default:
+            currentTimeState.currentTime--
             setTimer();
     }
 }
@@ -207,6 +220,10 @@ function initialize() {
         if(!isNaN(Number(key)))
             appendTaskToList(key)
     })
+}
+
+function updateTitle(min, sec, verb) {
+    document.querySelector("title").innerHTML = (min < 10 ? "0" + min : min) + ":" + (sec < 10 ? "0" + sec : sec) + " - " + verb
 }
 
 // Init
