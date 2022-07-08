@@ -1,3 +1,48 @@
 .progress {
     height: 30px;
 }
+
+lord-icon {
+    width: 100%;
+    height: auto;
+}
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) {
+    lord-icon {
+        width:200px;
+        height:200px;
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+    lord-icon {
+        width:250px;
+        height:250px;
+    }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+    lord-icon {
+        width:200px;
+        height:200px;
+    }
+}
+
+/* X-Large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    lord-icon {
+        width:250px;
+        height:auto;
+    }
+}
+
+/* XX-Large devices (larger desktops, 1400px and up) */
+@media (min-width: 1400px) {
+    lord-icon {
+        width:250px;
+        height: auto;
+    }
+}

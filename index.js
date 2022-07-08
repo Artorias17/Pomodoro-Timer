@@ -81,6 +81,8 @@ function nextTask(){
             currentTimeState.currentTime  = pomodoroTime
             currentTimeState.currentTask = currentTask.task
             --currentTask.pomodoro
+            setAnimation(currentTimeState.currentTaskType)
+
             if(currentTask.pomodoro){
                 document.querySelector(`#task-${allTasks[0]} span`).innerText = `Pomodoro: ${currentTask.pomodoro}`
                 localStorage[allTasks[0]] = JSON.stringify(currentTask)
@@ -97,15 +99,28 @@ function nextTask(){
         currentTimeState.currentTaskType = 2
         currentTimeState.currentTime = shortBreakTime
         currentTimeState.currentTask = "Short Break"
+        setAnimation(currentTimeState.currentTaskType)
     }
     else {
         currentTimeState.currentTaskType = 0
         currentTimeState.currentTime = 0
         currentTimeState.currentTask = "Nothing"
+        setAnimation(currentTimeState.currentTaskType)
+        progressBarWidth(0)
     }
 
     setTimer();
     if(currentTimeState.currentTaskType !== 0) startTimer()
+}
+
+//Set Animation
+function setAnimation(taskType) {
+    const id = ["no-work", "work", "relax"]
+    const animationTemplate = document.querySelector(`#${id[taskType]}`).content.cloneNode(true)
+    if(animationTemplate.querySelector("lord-icon").getAttribute("src") !== document.querySelector("#animationContainer > lord-icon")?.getAttribute("src")) {
+        document.querySelector("#animationContainer").innerHTML = ""
+        document.querySelector("#animationContainer").appendChild(animationTemplate)
+    }
 }
 
 //Save time status to local storage
@@ -163,21 +178,19 @@ function setTimer() {
 
 //Update countdown timer every second
 function updateTimeEverySecond() {
-    if(currentTimeState.currentTime === 0){
-        nextTask()
-        return
-    }
     switch (currentTimeState.currentTaskType){
         case 0:
             progressBarWidth(0)
+            nextTask()
             break
         case 1:
             progressBarWidth((pomodoroTime - (--currentTimeState.currentTime)) * 100 / pomodoroTime)
+            setTimer();
             break
         case 2:
             progressBarWidth((shortBreakTime - (--currentTimeState.currentTime)) * 100 / shortBreakTime)
+            setTimer();
     }
-    setTimer();
 }
 
 //Initialize the clock and the task list
@@ -186,6 +199,7 @@ function initialize() {
         currentTimeState = JSON.parse(localStorage["time"])
         localStorage.removeItem("time")
     }
+    setAnimation(currentTimeState.currentTaskType)
     setTimer();
 
     allTasks = Object.keys(localStorage).sort((a, b) => a - b)
